@@ -3,11 +3,14 @@ import React, { useState } from "react";
 const AdminLogin = ()=>{
     const [email,setEmail]=useState("");
     const [password,setPassword]=useState("");
+    const [wrongCD, setWrondCd] = useState(false);
 
     const onSubmitHandler = (e)=>{
         e.preventDefault();
         console.log(email);
         console.log(password);
+        setPassword("");
+        setEmail("");
         fetch("http://localhost:8000/api/ValidateLogin",{
             method: "POST",
             headers: {
@@ -23,11 +26,16 @@ const AdminLogin = ()=>{
         .then((response) => response.json())
         .then((data) => {
             console.log(data);
-            window.localStorage.setItem("emsignerAuthToken", data.Response.AuthToken);
-            alert("Login Successfull");
-            setTimeout(() => {
-                window.location.href = "/admindashboard";
-            }, 1000);
+            if(data.IsSuccess===true){
+                window.localStorage.setItem("emsignerAuthToken", data.Response.AuthToken);
+                // alert("Login Successfull");
+                // setTimeout(() => {
+                    window.location.href = "/admindashboard";
+                // }, 1000);
+            }
+            else {
+                setWrondCd(true)
+            }
         })
         // .then((data))
     }
@@ -44,6 +52,7 @@ const AdminLogin = ()=>{
                         </button>
                     </div>
                 </form>
+                {(wrongCD)?(<div>Please enter valid email id and password!</div>):(<div>Enter Details</div>)}
             </div>
         </>
     )
