@@ -37,7 +37,7 @@ const AdminLogin = ()=>{
             <div>
                 <form action="http://localhost:8000/api/ValidateLogin" method="POST" onSubmit={onSubmitHandler}>
                     <div>
-                        <input type="email" placeholder="email" onChange={(e)=>setEmail(e.target.value)} value={email} name="email"/>
+                        <input type="email" placeholder="emal" onChange={(e)=>setEmail(e.target.value)} value={email} name="email"/>
                         <input type="password" placeholder="password" onChange={(e)=>setPassword(e.target.value)} value={password} name="password"/>
                         <button type="submit">
                             Login
