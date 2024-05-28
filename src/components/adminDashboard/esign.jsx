@@ -2,57 +2,57 @@ import React, { useEffect, useState } from "react";
 import './esign.css'
 const Esign = () => {
 
-    // const [fetchedTemplates, setFetchedTemplates] = useState([]);
-    const fetchedTemplates=[
-        {
-            "TemplateId": 15598,
-            "TemplateName": "Test",
-            "ParentId": 0,
-            "ParentTemplateName": null,
-            "TemplateType": 1,
-            "SubscriberId": 12310
-        },
-        {
-            "TemplateId": 15602,
-            "TemplateName": "demo",
-            "ParentId": 0,
-            "ParentTemplateName": null,
-            "TemplateType": 1,
-            "SubscriberId": 12310
-        },
-        {
-            "TemplateId": 15682,
-            "TemplateName": "loan agreement",
-            "ParentId": 0,
-            "ParentTemplateName": null,
-            "TemplateType": 1,
-            "SubscriberId": 12310
-        },
-        {
-            "TemplateId": 15683,
-            "TemplateName": "New node",
-            "ParentId": 15682,
-            "ParentTemplateName": null,
-            "TemplateType": 2,
-            "SubscriberId": 12310
-        },
-        {
-            "TemplateId": 15709,
-            "TemplateName": "new",
-            "ParentId": 15682,
-            "ParentTemplateName": null,
-            "TemplateType": 2,
-            "SubscriberId": 12310
-        },
-        {
-            "TemplateId": 15711,
-            "TemplateName": "mynew",
-            "ParentId": 15682,
-            "ParentTemplateName": null,
-            "TemplateType": 2,
-            "SubscriberId": 12310
-        }
-    ];
+    const [fetchedTemplates, setFetchedTemplates] = useState([]);
+    // const fetchedTemplates=[
+    //     {
+    //         "TemplateId": 15598,
+    //         "TemplateName": "Test",
+    //         "ParentId": 0,
+    //         "ParentTemplateName": null,
+    //         "TemplateType": 1,
+    //         "SubscriberId": 12310
+    //     },
+    //     {
+    //         "TemplateId": 15602,
+    //         "TemplateName": "demo",
+    //         "ParentId": 0,
+    //         "ParentTemplateName": null,
+    //         "TemplateType": 1,
+    //         "SubscriberId": 12310
+    //     },
+    //     {
+    //         "TemplateId": 15682,
+    //         "TemplateName": "loan agreement",
+    //         "ParentId": 0,
+    //         "ParentTemplateName": null,
+    //         "TemplateType": 1,
+    //         "SubscriberId": 12310
+    //     },
+    //     {
+    //         "TemplateId": 15683,
+    //         "TemplateName": "New node",
+    //         "ParentId": 15682,
+    //         "ParentTemplateName": null,
+    //         "TemplateType": 2,
+    //         "SubscriberId": 12310
+    //     },
+    //     {
+    //         "TemplateId": 15709,
+    //         "TemplateName": "new",
+    //         "ParentId": 15682,
+    //         "ParentTemplateName": null,
+    //         "TemplateType": 2,
+    //         "SubscriberId": 12310
+    //     },
+    //     {
+    //         "TemplateId": 15711,
+    //         "TemplateName": "mynew",
+    //         "ParentId": 15682,
+    //         "ParentTemplateName": null,
+    //         "TemplateType": 2,
+    //         "SubscriberId": 12310
+    //     }
+    // ];
     const [selectedTemplate, setSelectedTemplate] = useState("");
     const [selectedTemplateID, setSelectedTemplateID] = useState(0);
     const [isSelect, setIsSelect] = useState(false);
@@ -106,6 +106,7 @@ const Esign = () => {
         setIsSelect(true);
         setSelectedTemplate(props.TemplateName);
         setSelectedTemplateID(props.TemplateId);
+            console.log(props.TemplateId);
     }
     const dropDownButtonHandler = () => {
         setIsDropdownActive(!isDropdownActive);
@@ -114,80 +115,74 @@ const Esign = () => {
     const estampCheckboxhandler = () => {
         if (wantEstamp && stateForEstamp !== '') {
             setEstampType("offline");
+            console.log("The state is good")
         }
         else if (wantEstamp) {
             console.log("Enter valid state name");
         }
     }
-    // const fetchTemplates = async () => {
-    //     try {
-    //         console.log(JSON.stringify(window.localStorage.getItem("emsignerAuthToken")))
-    //         const response = await fetch("http://localhost:8000/api/ListTemplates", {
-    //             method: "GET",
-    //             headers: {
-    //                 "Authorization": window.localStorage.getItem("emsignerAuthToken")
-    //             }
-    //         });
-    //         if (!response.ok) {
-    //             throw new Error('Failed to fetch');
-    //         }
-    //         const data = await response.json();
-    //         // console.log(data.Response);
-    //         setFetchedTemplates(data.Response);
-    //     } catch (e) {
-    //         console.error('Error fetching data:', e);
-    //     }
-    // };
+    const fetchTemplates = async () => {
+        try {
+            console.log(JSON.stringify(window.localStorage.getItem("emsignerAuthToken")))
+            const response = await fetch("http://localhost:8000/api/ListTemplates", {
+                method: "GET",
+                headers: {
+                    "Authorization": window.localStorage.getItem("emsignerAuthToken")
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch');
+            }
+            const data = await response.json();
+            console.log(data.Response);
+            setFetchedTemplates(data.Response);
+        } catch (e) {
+            console.error('Error fetching data:', e);
+        }
+    };
 
-    // const submitForEsign = async () => {
-    //     try {
-    //         // console.log(JSON.stringify(window.localStorage.getItem("emsignerAuthToken")))
-    //         const response = await fetch("http://localhost:8000/api/InitiateAndSignFlexiForm", {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": window.localStorage.getItem("emsignerAuthToken")
-    //             },
-    //             body: JSON.stringify([
-    //                 {
-    //                     "Data": "<DocumentElement><BulkData><Name>John</Name><City>LA</City></BulkData></DocumentElement>",
-    //                     "Signatories": signatories,
-    //                     "TemplateId": selectedTemplateID,
-    //                     "DonotSendCompletionMailToParticipants": true,
-    //                     "Reminder": "2",
-    //                     "listAttachmentDetails": [
-    //                         {
-    //                             "DocumentName": "",
-    //                             "Base64fileData": "",
-    //                             "Description": ""
-    //                         }
-    //                     ],
-    //                     "eStampType": "None",
-    //                     "State": "",
-    //                     "Denomination": 0
-    //                 }]
-    //             )
-    //         });
-    //         if (!response.ok) {
-    //             throw new Error('Failed to fetch');
-    //         }
-    //         const data = await response.json();
-    //         console.log(data);
-    //         // setFetchedTemplates(data.Response);
-    //     } catch (e) {
-    //         console.error('Error fetching data:', e);
-    //     }
-    // }
+    const submitForEsign = async () => {
+        try {
+            // console.log(JSON.stringify(window.localStorage.getItem("emsignerAuthToken")))
+            const response = await fetch("http://localhost:8000/api/InitiateAndSignFlexiForm", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": window.localStorage.getItem("emsignerAuthToken")
+                },
+                body: JSON.stringify([
+                    {
+                        "Data": "<DocumentElement><BulkData><Name>John</Name><City>LA</City></BulkData></DocumentElement>",
+                        "Signatories": signatories,
+                        "TemplateId": selectedTemplateID,
+                        "DonotSendCompletionMailToParticipants": true,
+                        "Reminder": "2",
+                        "eStampType": "None",
+                        "State": "",
+                        "Denomination": 0
+                    }]
+                )
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch');
+            }
+            const data = await response.json();
+            console.log(data);
+            // setFetchedTemplates(data.Response);
+        } catch (e) {
+            console.error('Error fetching data:', e);
+        }
+    }
 
 
-
+    // Sample Template - 2 -> ID -> 15891
     // console.log(fetchedTemplates[0])
     // console.log(selectedTemplate);
-    // console.log(selectedTemplateID);
-    console.log(signatories);
-    // useEffect(()=>{
-    //     fetchTemplates();
-    // },[])
+
+    // console.log(signatories);
+    useEffect(()=>{
+        fetchTemplates();
+    },[])
     const [isDropdownActive, setIsDropdownActive] = useState(false);
     return (<>
         <div className="esignMain">
@@ -247,12 +242,14 @@ const Esign = () => {
                                 <button onClick={DeleteHandler}>Delete</button>
                             </div>
                         ) : (
-                            <div onClick={() => setIsAddActive(true)}>Add Signatory</div>
+                            <button onClick={() => setIsAddActive(true)}>Add Signatory</button>
                         )}
                         <div className="estampChoice">
                             <div>
                                 <label>
-                                    <input type="checkbox" checked={wantEstamp} onChange={() => setWantEstamp(true)} />
+                                    <input type="checkbox" checked={wantEstamp} onChange={() => setWantEstamp((check)=>{
+                                        return !check;
+                                    })} />
                                     I want an e-stamp for this agreement
                                 </label>
                                 {wantEstamp && (
@@ -265,11 +262,11 @@ const Esign = () => {
                                     <button onClick={estampCheckboxhandler}>Submit Estamp option</button>
                                 </div>
                             </div>
-                            <div
-                            //  onClick={submitForEsign}
+                            <button
+                             onClick={submitForEsign}
                              >
                                 Submit For Esign Procedure.
-                            </div>
+                            </button>
                         </div>
                     </div>
                 )}
