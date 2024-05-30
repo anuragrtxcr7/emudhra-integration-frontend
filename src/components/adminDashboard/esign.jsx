@@ -4,66 +4,112 @@ const Esign = () => {
 
     const [fetchedTemplates, setFetchedTemplates] = useState([]);
     // const fetchedTemplates=[
-    //     {
-    //         "TemplateId": 15598,
-    //         "TemplateName": "Test",
-    //         "ParentId": 0,
-    //         "ParentTemplateName": null,
-    //         "TemplateType": 1,
-    //         "SubscriberId": 12310
-    //     },
-    //     {
-    //         "TemplateId": 15602,
-    //         "TemplateName": "demo",
-    //         "ParentId": 0,
-    //         "ParentTemplateName": null,
-    //         "TemplateType": 1,
-    //         "SubscriberId": 12310
-    //     },
-    //     {
-    //         "TemplateId": 15682,
-    //         "TemplateName": "loan agreement",
-    //         "ParentId": 0,
-    //         "ParentTemplateName": null,
-    //         "TemplateType": 1,
-    //         "SubscriberId": 12310
-    //     },
-    //     {
-    //         "TemplateId": 15683,
-    //         "TemplateName": "New node",
-    //         "ParentId": 15682,
-    //         "ParentTemplateName": null,
-    //         "TemplateType": 2,
-    //         "SubscriberId": 12310
-    //     },
-    //     {
-    //         "TemplateId": 15709,
-    //         "TemplateName": "new",
-    //         "ParentId": 15682,
-    //         "ParentTemplateName": null,
-    //         "TemplateType": 2,
-    //         "SubscriberId": 12310
-    //     },
-    //     {
-    //         "TemplateId": 15711,
-    //         "TemplateName": "mynew",
-    //         "ParentId": 15682,
-    //         "ParentTemplateName": null,
-    //         "TemplateType": 2,
-    //         "SubscriberId": 12310
-    //     }
+        // {
+        //   TemplateId: 15682,
+        //   TemplateName: 'loan agreement',
+        //   ParentId: 0,
+        //   TemplateType: 1,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15683,
+        //   TemplateName: 'New node',
+        //   ParentId: 15682,
+        //   TemplateType: 2,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15709,
+        //   TemplateName: 'new',
+        //   ParentId: 15682,
+        //   TemplateType: 2,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15711,
+        //   TemplateName: 'mynew',
+        //   ParentId: 15682,
+        //   TemplateType: 2,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15890,
+        //   TemplateName: 'Testing Template',
+        //   ParentId: 0,
+        //   TemplateType: 2,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15891,
+        //   TemplateName: 'Testing Template 2',
+        //   ParentId: 0,
+        //   TemplateType: 2,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15892,
+        //   TemplateName: 'Testing Template 3',
+        //   ParentId: 0,
+        //   TemplateType: 1,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15895,
+        //   TemplateName: '1 Signatory Template',
+        //   ParentId: 0,
+        //   TemplateType: 1,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15896,
+        //   TemplateName: '3 Signatory Template',
+        //   ParentId: 0,
+        //   TemplateType: 1,
+        //   SubscriberId: 12310
+        // },
+        // {
+        //   TemplateId: 15897,
+        //   TemplateName: 'Loan Agreement Template',
+        //   ParentId: 0,
+        //   TemplateType: 1,
+        //   SubscriberId: 12310
+        // }
     // ];
+
     const [selectedTemplate, setSelectedTemplate] = useState("");
     const [selectedTemplateID, setSelectedTemplateID] = useState(0);
     const [isSelect, setIsSelect] = useState(false);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [contact, setContact] = useState("");
+    const [numOfAllowedSignatories, setNumOfAllowedSignatories] = useState(0);
+    const [numOfEnteredSignatories, setNumOfEnteredSignatories] = useState(0);
     const [signatories, setSignatories] = useState([]);
     const [isAddActive, setIsAddActive] = useState(false);
     const [eStampType, setEstampType] = useState("None");
     const [stateForEstamp, setStateforEstamp] = useState("");
     const [wantEstamp, setWantEstamp] = useState(false);
+    const [fileName, setFileName] = useState();
+    const [base64file, setbase64file] = useState();
+    const [successMessage, setSuccessMessage] = useState();
+  
+    const onFileChange = (event) => {
+      var selectedFile = event.target.files[0];
+      if (selectedFile) {
+        setFileName(selectedFile.name);
+        console.log(selectedFile.name);
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          var selectedFile = selectedFile;
+          // Convert the file to Base64
+          var selectedFileBase64 = event.target.result.split(",")[1];
+          setbase64file(selectedFileBase64);
+          console.log(selectedFileBase64);
+        };
+        reader.readAsDataURL(selectedFile);
+      }
+    };
+
     const addSignatory = () => {
         if (name === "" || email === "" || contact === "") {
             console.warn("one or more fields are empty");
@@ -75,7 +121,7 @@ const Esign = () => {
 
         if (existingSignatory) {
             // If a signatory with the same details already exists, display a warning
-            console.warn('Signatory with the same email, name, or contact number already exists in the array.');
+            alert('Signatory with the same email, name, or contact number already exists in the array.');
         } else {
             // If no existing signatory found, add the new signatory to the array
             setSignatories([...signatories, {
@@ -86,6 +132,8 @@ const Esign = () => {
                 "MailSendingOptions": 1,
                 "ModeofAuthentication": 0
             }]);
+            setNumOfEnteredSignatories((num)=>(num+1));
+            console.log(numOfEnteredSignatories);
         }
         setIsAddActive(false);
         setName("");
@@ -101,12 +149,16 @@ const Esign = () => {
     const DeleteSignatory = (props) => {
         const updatedSignatories = signatories.filter(signatory => signatory.EmailId !== props.EmailId);
         setSignatories(updatedSignatories);
+        setNumOfEnteredSignatories(updatedSignatories.length);
+        console.log(updatedSignatories.length);
     }
     const TemplateSelectorButtonHandler = (props) => {
         setIsSelect(true);
         setSelectedTemplate(props.TemplateName);
         setSelectedTemplateID(props.TemplateId);
-            console.log(props.TemplateId);
+        if(props.TemplateId===15896) setNumOfAllowedSignatories(3);
+        else setNumOfAllowedSignatories(1);
+        // console.log(props.TemplateId);
     }
     const dropDownButtonHandler = () => {
         setIsDropdownActive(!isDropdownActive);
@@ -144,32 +196,80 @@ const Esign = () => {
     const submitForEsign = async () => {
         try {
             // console.log(JSON.stringify(window.localStorage.getItem("emsignerAuthToken")))
-            const response = await fetch("http://localhost:8000/api/InitiateAndSignFlexiForm", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": window.localStorage.getItem("emsignerAuthToken")
-                },
-                body: JSON.stringify([
-                    {
-                        "Data": "<DocumentElement><BulkData><Name>John</Name><City>LA</City></BulkData></DocumentElement>",
-                        "Signatories": signatories,
-                        "TemplateId": selectedTemplateID,
-                        "DonotSendCompletionMailToParticipants": true,
-                        "Reminder": "2",
-                        "eStampType": "None",
-                        "State": "",
-                        "Denomination": 0
-                    }]
-                )
-            });
-            if (!response.ok) {
-                throw new Error('Failed to fetch');
+            if(selectedTemplateID===15895){
+                const response = await fetch("http://localhost:8000/api/InitiateAndSign", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": window.localStorage.getItem("emsignerAuthToken")
+                    },
+                    body: JSON.stringify([
+                        {
+                            // "Data": "<DocumentElement><BulkData><Name>John</Name><City>LA</City></BulkData></DocumentElement>",
+                            "DocumentName":fileName,
+                            "FileData":base64file, 
+                            "Signatories": signatories,
+                            "TemplateId": selectedTemplateID,
+                            "DonotSendCompletionMailToParticipants": true,
+                            "Reminder": "2",
+                            "eStampType": "None",
+                            "State": "",
+                            "Denomination": 0
+                        }]
+                    )
+                });
+                if (!response.ok) {
+                    setSuccessMessage("Did Not succeed");
+                    throw new Error('Failed to fetch');
+                }
+                if(data.isSuccess===true){
+                    setSuccessMessage("success");
+                }
+                else setSuccessMessage("Did Not succeed");
+                const data = await response.json();
+                console.log(data);
             }
-            const data = await response.json();
-            console.log(data);
-            // setFetchedTemplates(data.Response);
+            else{
+                const response = await fetch("http://localhost:8000/api/InitiateAndSignFlexiForm", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": window.localStorage.getItem("emsignerAuthToken")
+                    },
+                    body: JSON.stringify([
+                        {
+                            "Data": "<DocumentElement><BulkData><Name>John</Name><City>LA</City></BulkData></DocumentElement>",
+                            "Signatories": [...signatories,{
+                                "EmailId": "pranavnahar@gmail.com",
+                                "Name": "Pranav Nahar",
+                                "ContactNo": "",
+                                "ModeOfSignature": "3",
+                                "MailSendingOptions": 1,
+                                "ModeofAuthentication": 0
+                            }],
+                            "TemplateId": selectedTemplateID,
+                            "DonotSendCompletionMailToParticipants": true,
+                            "Reminder": "2",
+                            "eStampType": "None",
+                            "State": "",
+                            "Denomination": 0
+                        }]
+                    )
+                });
+                if (!response.ok) {
+                    setSuccessMessage("Did Not succeed");
+                    throw new Error('Failed to fetch');
+                }
+                const data = await response.json();
+                if(data.IsSuccess===true){
+                    setSuccessMessage("success");
+                }
+                else setSuccessMessage("Did Not succeed");
+                console.log(data);
+                // setFetchedTemplates(data.Response);
+            }
         } catch (e) {
+            setSuccessMessage("Did Not succeed");
             console.error('Error fetching data:', e);
         }
     }
@@ -216,9 +316,10 @@ const Esign = () => {
                 )}
             </div>
             <div>
+                {selectedTemplateID?(selectedTemplateID===15895?("This is a Template (So First Select Signatories and then the file)"):("This is a Flexi-Form So only Select the number of signatories")):("Select a WorkFlow")}
                 {isSelect && (
                     <div>
-                        <div>Ensure that the number of signatories are same as that specified in the selected template</div>
+                        <div>Ensure that the number of signatories are {numOfAllowedSignatories}</div>
                         <div className="signatoryDetailsDisplay">
                             {signatories.length > 0 ? (
                                 <div>
@@ -230,7 +331,7 @@ const Esign = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <></>
+                                <><div>Add {selectedTemplateID===15896?("3"):("1")} Signatories</div></>
                             )}
                         </div>
                         {isAddActive ? (
@@ -241,8 +342,9 @@ const Esign = () => {
                                 <button onClick={addSignatory}>Add</button>
                                 <button onClick={DeleteHandler}>Delete</button>
                             </div>
-                        ) : (
+                        ) : ((numOfEnteredSignatories<numOfAllowedSignatories)?(
                             <button onClick={() => setIsAddActive(true)}>Add Signatory</button>
+                        ):((numOfEnteredSignatories===numOfAllowedSignatories)?(`All ${numOfAllowedSignatories} Signatories added`):(alert(`Reduce ${numOfEnteredSignatories-numOfAllowedSignatories} Signatories`)))
                         )}
                         <div className="estampChoice">
                             <div>
@@ -262,11 +364,25 @@ const Esign = () => {
                                     <button onClick={estampCheckboxhandler}>Submit Estamp option</button>
                                 </div>
                             </div>
+                            {(selectedTemplateID===15895)?(<div>
+                                <h3>Now select the file where you want the signing to be done</h3>
+                                <input type="file" onChange={(e) => onFileChange(e)} />
+                            </div>
+                            ):("Proceed Further")}
+                            {selectedTemplateID===15895?("Proceed To Sign IN"):(
+                                <div>
+                                    <h3>Mr Pranav Nahar will recieve the document after all the signatories have signed and will acknowlede his signature respectively for itenary to be complete</h3>
+
+                                </div>
+                            )}
                             <button
                              onClick={submitForEsign}
                              >
                                 Submit For Esign Procedure.
                             </button>
+                            <br />
+                            {successMessage?<div>{successMessage}</div>:<div></div>}
+                            {successMessage?alert(`${successMessage}`):<div></div>}
                         </div>
                     </div>
                 )}
