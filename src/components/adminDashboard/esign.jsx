@@ -126,11 +126,11 @@ const Esign = () => {
             // If no existing signatory found, add the new signatory to the array
             setSignatories([...signatories, {
                 "EmailId": email,
-                "Name": name,
-                "ContactNo": "",
-                "ModeOfSignature": "3",
-                "MailSendingOptions": 1,
-                "ModeofAuthentication": 0
+                // "Name": name,
+                // "ContactNo": "",
+                // "ModeOfSignature": "3",
+                // "MailSendingOptions": 1,
+                // "ModeofAuthentication": 0
             }]);
             setNumOfEnteredSignatories((num)=>(num+1));
             console.log(numOfEnteredSignatories);
@@ -209,12 +209,7 @@ const Esign = () => {
                             "DocumentName":fileName,
                             "FileData":base64file, 
                             "Signatories": signatories,
-                            "TemplateId": selectedTemplateID,
-                            "DonotSendCompletionMailToParticipants": true,
-                            "Reminder": "2",
-                            "eStampType": "None",
-                            "State": "",
-                            "Denomination": 0
+                            "TemplateId": selectedTemplateID
                         }]
                     )
                 });
@@ -266,6 +261,43 @@ const Esign = () => {
                 }
                 else setSuccessMessage("Did Not succeed");
                 console.log(data);
+                // const gg = window.localStorage.getItem("emsignerAuthToken");
+                // const response = await fetch("http://localhost:8000/api/InitiateAndSignFlexiForm", {
+                //     method: "POST",
+                //     headers: {
+                //         "Content-Type": "application/json",
+                //         "Authorization": "Basic " + gg
+                //     },
+                //     body: JSON.stringify([
+                //         {
+                //             "Data": "<DocumentElement><BulkData><Name>John</Name><City>LA</City></BulkData></DocumentElement>",
+                //             "Signatories": [...signatories,{
+                //                 "EmailId": "pranavnahar@gmail.com",
+                //                 "Name": "Pranav Nahar",
+                //                 "ContactNo": "",
+                //                 "ModeOfSignature": "3",
+                //                 "MailSendingOptions": 1,
+                //                 "ModeofAuthentication": 0
+                //             }],
+                //             "TemplateId": selectedTemplateID,
+                //             "DonotSendCompletionMailToParticipants": true,
+                //             "Reminder": "2",
+                //             "eStampType": "None",
+                //             "State": "",
+                //             "Denomination": 0
+                //         }]
+                //     )
+                // }).then(response => response.json());
+                // if (!response.ok) {
+                //     setSuccessMessage("Did Not succeed");
+                //     throw new Error('Failed to fetch');
+                // }
+                // const data = await response.json();
+                // if(data.IsSuccess===true){
+                //     setSuccessMessage("success");
+                // }
+                // else setSuccessMessage("Did Not succeed");
+                // console.log(data);
                 // setFetchedTemplates(data.Response);
             }
         } catch (e) {
@@ -382,7 +414,6 @@ const Esign = () => {
                             </button>
                             <br />
                             {successMessage?<div>{successMessage}</div>:<div></div>}
-                            {successMessage?alert(`${successMessage}`):<div></div>}
                         </div>
                     </div>
                 )}
