@@ -92,6 +92,8 @@ const Esign = () => {
     const [fileName, setFileName] = useState();
     const [base64file, setbase64file] = useState();
     const [successMessage, setSuccessMessage] = useState();
+    const [reminder, setReminder] = useState(0);
+    const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   
     const onFileChange = (event) => {
       var selectedFile = event.target.files[0];
@@ -126,11 +128,11 @@ const Esign = () => {
             // If no existing signatory found, add the new signatory to the array
             setSignatories([...signatories, {
                 "EmailId": email,
-                // "Name": name,
-                // "ContactNo": "",
-                // "ModeOfSignature": "3",
-                // "MailSendingOptions": 1,
-                // "ModeofAuthentication": 0
+                "Name": name,
+                "ContactNo": "",
+                "ModeOfSignature": "3",
+                "MailSendingOptions": 1,
+                "ModeofAuthentication": 0
             }]);
             setNumOfEnteredSignatories((num)=>(num+1));
             console.log(numOfEnteredSignatories);
@@ -194,9 +196,11 @@ const Esign = () => {
     };
 
     const submitForEsign = async () => {
+        
         try {
             // console.log(JSON.stringify(window.localStorage.getItem("emsignerAuthToken")))
             if(selectedTemplateID===15895){
+                setIsSubmitLoading(true);
                 const response = await fetch("http://localhost:8000/api/InitiateAndSign", {
                     method: "POST",
                     headers: {
@@ -209,10 +213,13 @@ const Esign = () => {
                             "DocumentName":fileName,
                             "FileData":base64file,
                             "Signatories": signatories,
-                            "TemplateId": selectedTemplateID
+                            "TemplateId": selectedTemplateID,
+                            "Reminder": "2",
+                            "SigningType": "2"
                         }]
                     )
                 });
+                setIsSubmitLoading(false);
                 if (!response.ok) {
                     setSuccessMessage("Did Not succeed");
                     throw new Error('Failed to fetch');
@@ -227,6 +234,7 @@ const Esign = () => {
                 }
             }
             else{
+                setIsSubmitLoading(true);
                 const response = await fetch("http://localhost:8000/api/InitiateAndSignFlexiForm", {
                     method: "POST",
                     headers: {
@@ -246,13 +254,15 @@ const Esign = () => {
                             }],
                             "TemplateId": selectedTemplateID,
                             "DonotSendCompletionMailToParticipants": true,
-                            "Reminder": "2",
+                            "Reminder": reminder || 0,
+                            "SigningType": "2", // Parellel Signing not enabled for flexi-form
                             "eStampType": "None",
                             "State": "",
                             "Denomination": 0
                         }]
                     )
                 });
+                setIsSubmitLoading(false);
                 if (!response.ok) {
                     setSuccessMessage("Did Not succeed");
                     throw new Error('Failed to fetch');
@@ -267,6 +277,7 @@ const Esign = () => {
                 }
             }
         } catch (e) {
+            setIsSubmitLoading(false);
             setSuccessMessage("Did Not succeed");
             console.error('Error fetching data:', e);
         }
@@ -367,19 +378,21 @@ const Esign = () => {
                                 <input type="file" onChange={(e) => onFileChange(e)} />
                             </div>
                             ):("Proceed Further")}
-                            {selectedTemplateID===15895?("Proceed To Sign IN"):(
+                            {selectedTemplateID===15895?("Proceed Further"):(
                                 <div>
                                     <h3>Mr Pranav Nahar will recieve the document after all the signatories have signed and will acknowlede his signature respectively for itenary to be complete</h3>
-
                                 </div>
                             )}
+                            <br />
+                            <span>Enter The Number of Days after which you want a reminder everytime</span><input type="number" placeholder="Enter Number" onChange={(e)=>(setReminder(e.target.value))}/>
+                            <br />
                             <button
                              onClick={submitForEsign}
                              >
                                 Submit For Esign Procedure.
                             </button>
                             <br />
-                            {successMessage?<div>{successMessage}</div>:<div></div>}
+                            {isSubmitLoading?<h2>Loading</h2>:(successMessage?<h2>{successMessage}</h2>:<h2></h2>)}
                         </div>
                     </div>
                 )}
