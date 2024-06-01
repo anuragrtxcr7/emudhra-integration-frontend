@@ -91,10 +91,13 @@ const Esign = () => {
     const [wantEstamp, setWantEstamp] = useState(false);
     const [fileName, setFileName] = useState();
     const [base64file, setbase64file] = useState();
+    const [final64File, setFinal64File] = useState();
     const [successMessage, setSuccessMessage] = useState();
     const [reminder, setReminder] = useState(0);
     const [isSubmitLoading, setIsSubmitLoading] = useState(false);
     const [signingType, setSigningType] = useState(1);
+    const [workFlowId, setWorkFlowId] = useState();
+    
   
     const onFileChange = (event) => {
       var selectedFile = event.target.files[0];
@@ -197,6 +200,35 @@ const Esign = () => {
         }
     };
 
+
+    // const getFinalDocumentDetails = async(workId)=>{
+    //     try {
+    //         // console.log(JSON.stringify(window.localStorage.getItem("emsignerAuthToken")))
+            
+    //         const response = await fetch("http://localhost:8000/api/GetWorkflowInfo", {
+    //             method: "POST",
+    //             headers: {"Authorization": window.localStorage.getItem("emsignerAuthToken")},
+    //             body: JSON.stringify(
+    //                 {
+    //                     "WorkflowId": 54086, 
+    //                 }
+    //             )
+    //         });
+    //         if (!response.ok) {
+    //             throw new Error('Failed to fetch');
+    //         }
+    //         else{
+    //             const data = await response.json();
+    //             console.log(data);
+    //             // const base64String = "data:application/pdf;base64," + ;
+    //         }
+            
+    //         // setFetchedTemplates(data.Response);
+    //     } catch (e) {
+    //         console.error('Error fetching data:', e);
+    //     }
+    // }
+
     const submitForEsign = async () => {
         
         try {
@@ -231,6 +263,10 @@ const Esign = () => {
                     const data = await response.json();
                     if(data.IsSuccess===true){
                         setSuccessMessage("success");
+                        setWorkFlowId(data.Response.WorkflowId)
+                        // console.log(data.Response.WorkflowId)
+                        getFinalDocumentDetails(data.Response.WorkflowId);
+                        // Fetch Download API
                     }
                     else setSuccessMessage("Did Not succeed");
                     console.log(data);
@@ -274,6 +310,8 @@ const Esign = () => {
                     const data = await response.json();
                     if(data.IsSuccess===true){
                         setSuccessMessage("success");
+                        setWorkFlowId(data.Response.WorkflowId)
+                        // Fetch Download API
                     }
                     else setSuccessMessage("Did Not succeed");
                     console.log(data);
@@ -294,6 +332,7 @@ const Esign = () => {
     // console.log(signatories);
     useEffect(()=>{
         fetchTemplates();
+        // getFinalDocumentDetails();
     },[])
     const [isDropdownActive, setIsDropdownActive] = useState(false);
     return (<>
@@ -401,7 +440,13 @@ const Esign = () => {
                                 Submit For Esign Procedure.
                             </button>
                             <br />
-                            {isSubmitLoading?<h2>Loading</h2>:(successMessage?<h2>{successMessage}</h2>:<h2></h2>)}
+                            {isSubmitLoading?<h2>Loading</h2>:successMessage?(<div>
+                                <h2>{successMessage}</h2>
+                                <br />
+                                {/* {successMessage==="success" ? (<div>
+                                    <a href="" download="convertedPDFFile.pdf">Click Here to Download PDF</a>
+                                </div>):<div></div>} */}
+                            </div>):<h2></h2>}
                         </div>
                     </div>
                 )}
