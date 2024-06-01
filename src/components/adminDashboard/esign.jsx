@@ -214,8 +214,9 @@ const Esign = () => {
                             "FileData":base64file,
                             "Signatories": signatories,
                             "TemplateId": selectedTemplateID,
-                            "Reminder": "2",
-                            "SigningType": "2"
+                            "Reminder":  reminder || 0,
+                            "SigningType": "2",
+                            "DonotSendCompletionMailToParticipants": false,
                         }]
                     )
                 });
@@ -253,7 +254,7 @@ const Esign = () => {
                                 "ModeofAuthentication": 0
                             }],
                             "TemplateId": selectedTemplateID,
-                            "DonotSendCompletionMailToParticipants": true,
+                            "DonotSendCompletionMailToParticipants": false,
                             "Reminder": reminder || 0,
                             "SigningType": "2", // Parellel Signing not enabled for flexi-form
                             "eStampType": "None",
