@@ -94,6 +94,7 @@ const Esign = () => {
     const [successMessage, setSuccessMessage] = useState();
     const [reminder, setReminder] = useState(0);
     const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+    const [signingType, setSigningType] = useState(1);
   
     const onFileChange = (event) => {
       var selectedFile = event.target.files[0];
@@ -159,6 +160,7 @@ const Esign = () => {
         setSelectedTemplate(props.TemplateName);
         setSelectedTemplateID(props.TemplateId);
         if(props.TemplateId===15896) setNumOfAllowedSignatories(3);
+        else if(props.TemplateId===15929)setNumOfAllowedSignatories(2);
         else setNumOfAllowedSignatories(1);
         // console.log(props.TemplateId);
     }
@@ -199,7 +201,7 @@ const Esign = () => {
         
         try {
             // console.log(JSON.stringify(window.localStorage.getItem("emsignerAuthToken")))
-            if(selectedTemplateID===15895){
+            if(selectedTemplateID===15895 || selectedTemplateID===15929){
                 setIsSubmitLoading(true);
                 const response = await fetch("http://localhost:8000/api/InitiateAndSign", {
                     method: "POST",
@@ -215,7 +217,7 @@ const Esign = () => {
                             "Signatories": signatories,
                             "TemplateId": selectedTemplateID,
                             "Reminder":  reminder || 0,
-                            "SigningType": "2",
+                            "SigningType": signingType,
                             "DonotSendCompletionMailToParticipants": false,
                         }]
                     )
@@ -256,7 +258,7 @@ const Esign = () => {
                             "TemplateId": selectedTemplateID,
                             "DonotSendCompletionMailToParticipants": false,
                             "Reminder": reminder || 0,
-                            "SigningType": "2", // Parellel Signing not enabled for flexi-form
+                            "SigningType": "1", // Parellel Signing not enabled for flexi-form
                             "eStampType": "None",
                             "State": "",
                             "Denomination": 0
@@ -326,7 +328,7 @@ const Esign = () => {
                 )}
             </div>
             <div>
-                {selectedTemplateID?(selectedTemplateID===15895?("This is a Template (So First Select Signatories and then the file)"):("This is a Flexi-Form So only Select the number of signatories")):("Select a WorkFlow")}
+                {selectedTemplateID?((selectedTemplateID===15895 || selectedTemplateID===15929)?("This is a Template (So First Select Signatories and then the file)"):("This is a Flexi-Form So only Select the number of signatories")):("Select a WorkFlow")}
                 {isSelect && (
                     <div>
                         <div>Ensure that the number of signatories are {numOfAllowedSignatories}</div>
@@ -341,7 +343,7 @@ const Esign = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <><div>Add {selectedTemplateID===15896?("3"):("1")} Signatories</div></>
+                                <><div>Add {selectedTemplateID===15896?("3"):selectedTemplateID===15929?("2"):("1")} Signatories</div></>
                             )}
                         </div>
                         {isAddActive ? (
@@ -374,7 +376,7 @@ const Esign = () => {
                                     <button onClick={estampCheckboxhandler}>Submit Estamp option</button>
                                 </div>
                             </div>
-                            {(selectedTemplateID===15895)?(<div>
+                            {(selectedTemplateID===15895)||(selectedTemplateID===15929)?(<div>
                                 <h3>Now select the file where you want the signing to be done</h3>
                                 <input type="file" onChange={(e) => onFileChange(e)} />
                             </div>
@@ -386,6 +388,12 @@ const Esign = () => {
                             )}
                             <br />
                             <span>Enter The Number of Days after which you want a reminder everytime</span><input type="number" placeholder="Enter Number" onChange={(e)=>(setReminder(e.target.value))}/>
+                            <br />
+                            <label for="signMethod">Choose a Signing Method</label>
+                            <select name="signMethod" id="signMethod" onChange={(e)=>(setSigningType(e.target.value))}>
+                                <option value="1">Serial Signing</option>
+                                {(selectedTemplateID===15895)||(selectedTemplateID===15929)?<option value="2">Parallel</option>:<></>} 
+                            </select>
                             <br />
                             <button
                              onClick={submitForEsign}
